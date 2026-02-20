@@ -1,40 +1,25 @@
 name: Build APK
-
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y \
-            autoconf automake libtool pkg-config \
-            build-essential git \
-            libssl-dev zlib1g-dev \
-            libffi-dev openjdk-17-jdk \
-            zip unzip cmake
-          pip install buildozer cython==0.29.37
+      - name: Build with Buildozer
+        uses: ArtemSerebryakov/buildozer-action@v1
+        with:
+          buildozer_version: master
+          python_version: 3.11
+        env:
+          # This forces the action to accept the licenses we've been struggling with
+          EXPECT_ANDROID_SDK_LICENSE: "y"
 
-      - name: Install Android SDK and Accept Licenses
-        run: |
-          yes | sdkmanager --licenses || true
-          # Explicitly grabbing version 34 to avoid the RC1 license bug
-          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-
-      - name: Build APK with Buildozer
-        run: |
-          buildozer android debug
-
-      - name: Upload APK
-        uses: actions/checkout@v4
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
           name: package
           path: bin/*.apk
