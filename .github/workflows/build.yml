@@ -33,6 +33,10 @@ jobs:
           zip unzip cmake
         pip install buildozer cython==0.29.37
 
+        - name: Install Android SDK and Accept Licenses
+        run: |
+          yes | sdkmanager --licenses || true
+
     - name: Build APK
       run: |
         buildozer android debug
