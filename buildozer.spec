@@ -101,10 +101,13 @@ android.permissions = CAMERA
 #android.features = android.hardware.usb.host
 
 # (int) Target Android API, should be as high as possible.
-#android.api = 33
+android.api = 34
 
 # (int) Minimum API your APK / AAB will support.
-#android.minapi = 21
+android.minapi = 21
+
+# (str) Android SDK build-tools revision
+android.sdk_build_tools_revision = 34.0.0
 
 # (int) Android SDK version to use
 #android.sdk = 20
