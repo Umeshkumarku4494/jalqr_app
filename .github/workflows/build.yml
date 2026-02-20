@@ -10,13 +10,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build with Buildozer
-        uses: ArtemSerebryakov/buildozer-action@v1
+        uses: Enteoff/buildozer-action@v1.2.1
         with:
           buildozer_version: master
           python_version: 3.11
         env:
-          # This forces the action to accept the licenses we've been struggling with
-          EXPECT_ANDROID_SDK_LICENSE: "y"
+          # This is the "magic" line that accepts the licenses automatically
+          ACCEPT_SDK_LICENSE: "y"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
