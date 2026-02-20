@@ -8,41 +8,33 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    - name: Install Android SDK and Accept Licenses
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            autoconf automake libtool pkg-config \
+            build-essential git \
+            libssl-dev zlib1g-dev \
+            libffi-dev openjdk-17-jdk \
+            zip unzip cmake
+          pip install buildozer cython==0.29.37
+
+      - name: Install Android SDK and Accept Licenses
         run: |
           yes | sdkmanager --licenses || true
+          # Explicitly grabbing version 34 to avoid the RC1 license bug
           sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y \
-          autoconf automake libtool pkg-config \
-          build-essential git \
-          libssl-dev zlib1g-dev \
-          libffi-dev openjdk-17-jdk \
-          zip unzip cmake
-        pip install buildozer cython==0.29.37
-
-        - name: Install Android SDK and Accept Licenses
+      - name: Build APK with Buildozer
         run: |
-          yes | sdkmanager --licenses || true
+          buildozer android debug
 
-    - name: Build APK
-      run: |
-        buildozer android debug
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: myapp-debug
-        path: bin/*.apk
+      - name: Upload APK
+        uses: actions/checkout@v4
+        with:
+          name: package
+          path: bin/*.apk
